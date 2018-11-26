@@ -18,9 +18,9 @@ RUN set -ex \
     && cd ./nwpc-system-collector/vendor/nwpc-workflow-model \
     && pip install . \
     && cd /srv \
-    && rm -rf ./nwpc-system-collector/nwpc-sms-collector/docker \
-    && cp -r ./nwpc-system-collector/nwpc-sms-collector . \
-    && rm -rf ./nwpc-system-collector \
+    && rm -rf /srv/nwpc-system-collector/nwpc-sms-collector/docker \
+    && cp -r /srv/nwpc-system-collector/nwpc-sms-collector . \
+    && rm -rf /srv/nwpc-system-collector \
     && cd /srv/nwpc-sms-collector \
     && pip install .
 

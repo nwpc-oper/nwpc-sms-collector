@@ -6,7 +6,7 @@ import logging
 import click
 import requests
 
-from nwpc_sms_collector.sms_util import get_sms_whole_status
+from nwpc_sms_collector.sms_util import get_sms_status
 
 
 default_sms_password = 1
@@ -24,19 +24,26 @@ def cli():
 @cli.command('collect')
 @click.option("-o", "--owner", help="owner name, default is same as sms server user name")
 @click.option("-r", "--repo", help="repo name, default is same as sms server name")
+@click.option("--sms-host", help="sms host", required=True)
+@click.option("--sms-prog", help="sms prog", required=True)
 @click.option("-n", "--sms-name", help="sms server name", required=True)
 @click.option("-u", "--sms-user", help="sms server user name", required=True)
 @click.option("-p", "--sms-password", default=default_sms_password,
               help="sms server password, default is {default_sms_password}".format(
                 default_sms_password=default_sms_password))
+@click.option("--cdp-path", help="cdp path", required=True)
 @click.option("--disable-post", is_flag=True, default=False, help="disable post to agent.")
 @click.option('--post-url', help='post URL')
 @click.option('--gzip', 'content_encoding', flag_value='gzip', help='use gzip to post data.')
 @click.option("--verbose", is_flag=True, default=False, help="show more outputs")
-def collect_handler(owner, repo, sms_name, sms_user, sms_password,
+def collect_handler(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_password, cdp_path,
                     disable_post, post_url, content_encoding, verbose):
     click.echo('Getting sms status for {owner}/{repo}'.format(owner=owner, repo=repo))
-    result = get_sms_whole_status(owner, repo, sms_name, sms_user, sms_password, verbose)
+    result = get_sms_status(cdp_path,
+                            owner, repo,
+                            sms_host, sms_prog,
+                            sms_name, sms_user, sms_password,
+                            verbose)
     click.echo('Getting sms status for {owner}/{repo}...Done'.format(owner=owner, repo=repo))
 
     post_data = {
@@ -86,12 +93,17 @@ def collect_handler(owner, repo, sms_name, sms_user, sms_password,
 @cli.command("show")
 @click.option("-o", "--owner", help="owner name, default is same as sms server user name")
 @click.option("-r", "--repo", help="repo name, default is same as sms server name")
+@click.option("--sms-host", help="sms host", required=True)
+@click.option("--sms-prog", help="sms prog", required=True)
 @click.option("-n", "--sms-name", help="sms server name", required=True)
 @click.option("-u", "--sms-user", help="sms server user name", required=True)
 @click.option("-p", "--sms-password", help="sms server password, default is {default_sms_password}".format(
             default_sms_password=default_sms_password))
-def show_handler(owner, repo, sms_name, sms_user, sms_password, verbose):
-    result = get_sms_whole_status(owner, repo, sms_name, sms_user, sms_password, verbose=False)
+@click.option("--cdp-path", help="cdp path", required=True)
+@click.option("--verbose", is_flag=True, default=False, help="show more outputs")
+def show_handler(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_password, cdp_path, verbose):
+    result = get_sms_status(
+        cdp_path, owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_password, verbose=verbose)
     print(json.dumps(result))
     return 0
 
