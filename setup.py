@@ -39,7 +39,9 @@ setup(
         'nwpc_workflow_model'
     ],
 
-    extras_require={},
+    extras_require={
+        'grpc': ['grpcio', 'googleapis-common-protos']
+    },
 
     entry_points={}
 )

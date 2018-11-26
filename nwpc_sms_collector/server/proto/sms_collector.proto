@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package sms_collector;
+
+message StatusRequest{
+    string owner = 1;
+    string repo = 2;
+    string sms_host = 3;
+    string sms_prog = 4;
+    string sms_name = 5;
+    string sms_user = 6;
+    string sms_password = 7;
+    string post_url = 8;
+    string content_encoding = 9;
+    bool disable_post = 10;
+    bool verbose = 11;
+}
+
+message Response{
+    string status = 1;
+}
+
+message MessageResponse{
+    string message = 1;
+}
+
+service SmsCollector{
+    rpc CollectStatus(StatusRequest) returns (Response){}
+}

@@ -24,6 +24,6 @@ RUN set -ex \
     && cd /srv/nwpc-sms-collector \
     && pip install .
 
-WORKDIR /srv/nwpc-sms-collector
+WORKDIR /srv/nwpc-sms-collector/nwpc_sms_collector
 
 ENTRYPOINT ["python3"]
