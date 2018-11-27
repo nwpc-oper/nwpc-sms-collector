@@ -11,6 +11,13 @@ from nwpc_sms_collector.sms_util import get_sms_status
 
 default_sms_password = 1
 
+logging.basicConfig(
+    format='%(asctime)s %(message)s',
+    datefmt='[%Y-%m-%d %H:%M:%S]',
+    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
 
 @click.group()
 def cli():
@@ -23,13 +30,13 @@ def cli():
 
 def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_password, cdp_path,
                    disable_post, post_url, content_encoding, verbose):
-    click.echo('Getting sms status for {owner}/{repo}'.format(owner=owner, repo=repo))
+    logger.info('Getting sms status for {owner}/{repo}'.format(owner=owner, repo=repo))
     result = get_sms_status(cdp_path,
                             owner, repo,
                             sms_host, sms_prog,
                             sms_name, sms_user, sms_password,
                             verbose)
-    click.echo('Getting sms status for {owner}/{repo}...Done'.format(owner=owner, repo=repo))
+    logger.info('Getting sms status for {owner}/{repo}...Done'.format(owner=owner, repo=repo))
 
     post_data = {
         'message': json.dumps(result)
@@ -51,11 +58,11 @@ def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_pass
 
     if not disable_post:
         if len(post_url) == 0:
-            click.echo("Please set post url")
+            logger.warning("Please set post url")
             return
 
         if verbose:
-            click.echo("Posting sms status for {owner}/{repo}...".format(owner=owner, repo=repo))
+            logger.info("Posting sms status for {owner}/{repo}...".format(owner=owner, repo=repo))
 
         url = post_url.format(
             owner=owner,
@@ -72,7 +79,7 @@ def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_pass
             requests.post(url, data=post_data)
 
         if verbose:
-            click.echo("Posting sms status for {owner}/{repo}...done".format(owner=owner, repo=repo))
+            logger.info("Posting sms status for {owner}/{repo}...done".format(owner=owner, repo=repo))
 
 
 @cli.command('collect')
