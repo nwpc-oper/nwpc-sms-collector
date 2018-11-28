@@ -12,4 +12,4 @@ ENTRYPOINT ["python3", "server/sms_collector_server.py"]
 
 CMD ["--rpc-target=[::]:50051", \
     "--workers-num=5", \
-    "--cdp-path=/srv/cdp"]
+    "--cdp-path=/srv/bin/cdp"]
