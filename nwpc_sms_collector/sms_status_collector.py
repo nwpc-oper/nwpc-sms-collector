@@ -2,6 +2,7 @@
 import json
 import gzip
 import logging
+from datetime import datetime
 
 import click
 import requests
@@ -30,13 +31,17 @@ def cli():
 
 def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_password, cdp_path,
                    disable_post, post_url, content_encoding, verbose):
-    logger.info('Getting sms status for {owner}/{repo}'.format(owner=owner, repo=repo))
+    start_time = datetime.utcnow()
+    logger.info('[{owner}/{repo}] Fetching sms status...'.format(owner=owner, repo=repo))
     result = get_sms_status(cdp_path,
                             owner, repo,
                             sms_host, sms_prog,
                             sms_name, sms_user, sms_password,
                             verbose)
-    logger.info('Getting sms status for {owner}/{repo}...Done'.format(owner=owner, repo=repo))
+
+    fetching_end_time = datetime.utcnow()
+    logger.info('[{owner}/{repo}] Fetching sms status...Done. Used {cost}'.format(
+        owner=owner, repo=repo, cost=fetching_end_time-start_time))
 
     post_data = {
         'message': json.dumps(result)
@@ -44,17 +49,17 @@ def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_pass
 
     if verbose:
         if 'error' in result:
-            click.echo(result)
-        else:
-            click.echo("""result:
-    app: {app},
-    type: {type},
-    timestamp: {timestamp},
-    data: ...
-""".format(
-                app=result['app'],
-                type=result['type'],
-                timestamp=result['timestamp']))
+            logger.warning(result)
+#         else:
+#             click.echo("""result:
+#     app: {app},
+#     type: {type},
+#     timestamp: {timestamp},
+#     data: ...
+# """.format(
+#                 app=result['app'],
+#                 type=result['type'],
+#                 timestamp=result['timestamp']))
 
     if not disable_post:
         if len(post_url) == 0:
@@ -62,7 +67,7 @@ def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_pass
             return
 
         if verbose:
-            logger.info("Posting sms status for {owner}/{repo}...".format(owner=owner, repo=repo))
+            logger.info("[{owner}/{repo}] Posting sms status...".format(owner=owner, repo=repo))
 
         url = post_url.format(
             owner=owner,
@@ -79,7 +84,14 @@ def collect_status(owner, repo, sms_host, sms_prog, sms_name, sms_user, sms_pass
             requests.post(url, data=post_data)
 
         if verbose:
-            logger.info("Posting sms status for {owner}/{repo}...done".format(owner=owner, repo=repo))
+            posting_end_time = datetime.utcnow()
+            logger.info("[{owner}/{repo}] Posting sms status...Done. Used {cost}".format(
+                owner=owner, repo=repo, cost=posting_end_time-fetching_end_time))
+
+    end_time = datetime.utcnow()
+    if verbose:
+        logger.info("[{owner}/{repo}] Collect sms status used {cost}".format(
+            owner=owner, repo=repo, cost=end_time-fetching_end_time))
 
 
 @cli.command('collect')
