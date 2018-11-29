@@ -2,11 +2,13 @@
 from concurrent import futures
 import time
 import logging
+import json
 
 import click
 import grpc
 
 from nwpc_sms_collector.sms_status_collector import collect_status
+from nwpc_sms_collector.sms_node_collector import collect_variable
 from nwpc_sms_collector.server.proto import sms_collector_pb2_grpc, sms_collector_pb2
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -45,6 +47,30 @@ class SmsCollectorService(sms_collector_pb2_grpc.SmsCollectorServicer):
 
         return sms_collector_pb2.Response(
             status="ok"
+        )
+
+    def CollectVariable(self, request, context):
+        owner = request.owner
+        repo = request.repo
+        sms_host = request.sms_host
+        sms_prog = request.sms_prog
+        sms_user = request.sms_user
+        sms_password = request.sms_password
+        node_path = request.node_path
+        verbose = request.verbose
+
+        logger.info('CollectVariable: {owner}/{repo} {node_path}...'.format(
+            owner=owner, repo=repo, node_path=node_path))
+        result = collect_variable(
+            self.cdp_path, owner, repo,
+            sms_host, sms_prog, sms_user, sms_password, node_path, verbose
+        )
+        logger.info('CollectVariable: {owner}/{repo} {node_path}...done'.format(
+            owner=owner, repo=repo, node_path=node_path))
+
+        return sms_collector_pb2.Response(
+            status="ok",
+            result=json.dumps(result)
         )
 
 

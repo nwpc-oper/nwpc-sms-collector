@@ -8,21 +8,8 @@ from nwpc_sms_collector.sms_util import get_cdp_output
 from nwpc_workflow_model.sms.sms_node import SmsNode
 
 
-@click.group()
-def cli():
-    pass
-
-
-@cli.command('variable')
-@click.option('-o', '--owner', type=str, help='owner', required=True)
-@click.option('-r', '--repo', type=str, help='repo', required=True)
-@click.option("--sms-host", help="sms host", required=True)
-@click.option("--sms-prog", help="sms prog", required=True)
-@click.option('--sms-user', type=str, help='sms user', required=True)
-@click.option('--sms-password', type=str, default='1', help='sms password')
-@click.option('--node-path', type=str, help='node path', required=True)
-@click.option("--cdp-path", help="cdp path", required=True)
-def get_variable(owner, repo, sms_host, sms_prog, sms_user, sms_password, node_path, cdp_path):
+def collect_variable(cdp_path, owner, repo, sms_host, sms_prog, sms_user, sms_password,
+                     node_path, verbose):
     request_date_time = datetime.datetime.utcnow()
     request_time_string = request_date_time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -57,7 +44,6 @@ def get_variable(owner, repo, sms_host, sms_prog, sms_user, sms_password, node_p
                 }
             }
         }
-        print(json.dumps(result, indent=2))
     else:
         result = {
             'app': 'sms_node_collector',
@@ -77,8 +63,28 @@ def get_variable(owner, repo, sms_host, sms_prog, sms_user, sms_password, node_p
                 }
             }
         }
-        print(json.dumps(result, indent=2))
     return result
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command('variable')
+@click.option('-o', '--owner', type=str, help='owner', required=True)
+@click.option('-r', '--repo', type=str, help='repo', required=True)
+@click.option("--sms-host", help="sms host", required=True)
+@click.option("--sms-prog", help="sms prog", required=True)
+@click.option('--sms-user', type=str, help='sms user', required=True)
+@click.option('--sms-password', type=str, default='1', help='sms password')
+@click.option('--node-path', type=str, help='node path', required=True)
+@click.option("--cdp-path", help="cdp path", required=True)
+def get_variable(owner, repo, sms_host, sms_prog, sms_user, sms_password, node_path, cdp_path):
+    result = collect_variable(
+        cdp_path, owner, repo, sms_host, sms_prog, sms_user, sms_password, node_path, False
+    )
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":

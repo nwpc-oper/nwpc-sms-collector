@@ -16,14 +16,24 @@ message StatusRequest{
     bool verbose = 11;
 }
 
-message Response{
-    string status = 1;
+message VariableRequest{
+    string owner = 1;
+    string repo = 2;
+    string sms_host = 3;
+    string sms_prog = 4;
+    string sms_name = 5;
+    string sms_user = 6;
+    string sms_password = 7;
+    string node_path = 8;
+    bool verbose = 9;
 }
 
-message MessageResponse{
-    string message = 1;
+message Response{
+    string status = 1;
+    string result = 2;
 }
 
 service SmsCollector{
     rpc CollectStatus(StatusRequest) returns (Response){}
+    rpc CollectVariable(VariableRequest) returns (Response) {}
 }
