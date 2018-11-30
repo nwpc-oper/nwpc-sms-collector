@@ -2,18 +2,16 @@ FROM nwpc/sms
 
 LABEL maintainer="perillaroc@gmail.com"
 
-COPY . /srv/nwpc-system-collector/
+COPY nwpc-sms-collector /srv/nwpc-sms-collector/
+COPY vendor /srv/vendor/
 
 RUN set -ex \
-    && cd /srv \
-    && cd ./nwpc-system-collector/vendor/nwpc-workflow-model \
+    && cd /srv/vendor/nwpc-workflow-model \
+    && pip install . \
+    && cd /srv/nwpc-sms-collector \
     && pip install . \
     && cd /srv \
-    && rm -rf /srv/nwpc-system-collector/nwpc-sms-collector/docker \
-    && cp -r /srv/nwpc-system-collector/nwpc-sms-collector . \
-    && rm -rf /srv/nwpc-system-collector \
-    && cd /srv/nwpc-sms-collector \
-    && pip install .
+    && rm -rf vendor
 
 WORKDIR /srv/nwpc-sms-collector/nwpc_sms_collector
 
