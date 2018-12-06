@@ -1,4 +1,4 @@
-FROM nwpcc/sms-collector:base
+FROM nwpcc/sms-collect:base
 
 LABEL maintainer="perillaroc@gmail.com"
 
