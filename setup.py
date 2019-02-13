@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
-from codecs import open
-from os import path
+import codecs
+import os
 
-here = path.abspath(path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__))
 
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with codecs.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
@@ -14,6 +14,7 @@ setup(
 
     description='An SMS collector at NWPC.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
 
     url='https://github.com/perillaroc/nwpc-system-collector',
 
